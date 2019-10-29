@@ -17,10 +17,8 @@ class Window:
         self.background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
         self.buttons = {}
-
-        b1 = Button(self.window ,text= 'add',command=add)
-        b1.place(x = 542, y = 352, height = 30, width = 180)
-        # b1.pack()
+        self.text_box = {}
+        self.popup = {}
 
         self.connect_database()
 
@@ -57,8 +55,24 @@ class Window:
         self.cur.execute("UPDATE library SET {} WHERE title='{}'".format(temp,title))
         self.conn.commit()
 
-class But:
-    def __init__(self, window, text, x, y, command, width = 14, height = 5):
-        window.buttons[text] = Button(window,text= text,command=command)
-        # window.buttons[text].place(x = x, y = y, height = height, width = width)
-        window.buttons[text].pack()
+
+def but(window, text, x, y, command, width = 180, height = 30):
+    window.buttons[text] = Button(window.window,text= text,command=command)
+    window.buttons[text].place(x = x, y = y, height = height, width = width)
+
+def text_box(window, title, x, y, width = 150, height = 30):
+    window.text_box[title] = Text(window.window)
+    window.text_box[title].place(x = x, y = y, height = height, width = width)
+
+class Dropdown():
+    def __init__(self, window, dictionary, default, text, action, x, y, width = 150, height = 30):
+        self.tkvar = StringVar(window.window)
+        self.tkvar.set('default')
+        self.popupMenu = OptionMenu(window.window, self.tkvar, *dictionary)
+        self.popupMenu.place(x = x, y = y, height = height, width = width)
+        self.tkvar.trace('w', action)
+        window.popup[text] = self
+
+def listbox(window, x = 20, y = 320, width = 440, height = 250):
+    window.listbox=Listbox(window.window)
+    window.listbox.place(x = x, y = y, height = height, width = width)
