@@ -1,8 +1,7 @@
 from tkinter import *
 import sqlite3
 from PIL import ImageTk, Image
-def add():
-    pass
+
 class Window:
     def __init__(self, title):
         self.window = Tk()
@@ -35,8 +34,8 @@ class Window:
         self.conn.close()
 
     def fetch_database(self):
-        self.cur.execute("SELECT * FROM {}".format(library))
-        rows=cur.fetchall()
+        self.cur.execute("SELECT * FROM {}".format('library'))
+        rows=self.cur.fetchall()
         return rows
 
     def update_database(self, title, newtype = None, newrating = None, newnotes = None, newimage = None):
@@ -49,12 +48,18 @@ class Window:
             ltemp.append("notes='{}'".format(newnotes))
         if newimage!=None:
             ltemp.append("image_path='{}'".format(newimage))
-
         temp=' , '.join(ltemp)
         #cur.execute("UPDATE table1 SET prix=399 WHERE name='grod halima' AND numero_visite=3".format(temp,id,numvis))
         self.cur.execute("UPDATE library SET {} WHERE title='{}'".format(temp,title))
         self.conn.commit()
 
+    def delete_database(self, title):
+        self.cur.execute("DELETE FROM library WHERE title = '{}'".format(title))
+        self.conn.commit()
+
+    def search_database(self, title):
+        self.cur.execute("SELECT * FROM library WHERE title LIKE '%{}%'".format(title))
+        return self.cur.fetchall()
 
 def but(window, text, x, y, command, width = 180, height = 30):
     window.buttons[text] = Button(window.window,text= text,command=command)
@@ -67,7 +72,7 @@ def text_box(window, title, x, y, width = 150, height = 30):
 class Dropdown():
     def __init__(self, window, dictionary, default, text, action, x, y, width = 150, height = 30):
         self.tkvar = StringVar(window.window)
-        self.tkvar.set('default')
+        self.tkvar.set('anime')
         self.popupMenu = OptionMenu(window.window, self.tkvar, *dictionary)
         self.popupMenu.place(x = x, y = y, height = height, width = width)
         self.tkvar.trace('w', action)
